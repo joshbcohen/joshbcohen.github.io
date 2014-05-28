@@ -1,38 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<style>
-		text {
-			font-size: 18px; 
-			font-family: "Open Sans", Calibri, sans-serif; 
-			text-anchor: middle; 
-			alignment-baseline: central;
-		}
-	</style>
+
 </head>
 <body>
-	<div id="birthday"></div>
-	<script>
-		height = 600;
-		width = 600;
-		var birthdaySvg = d3.select("#birthday")
-			.append("svg")
-			.attr("height", height)
-			.attr("width", width);
-		var i = 0;
-		setInterval(function() {
-			var colors = ["#FF7777", "77FF77", "7777FF"];
-			var texts = ["Happy", "birthday", "Abby", "woop!"];
-			var color = colors[Math.floor(Math.random() * colors.length)];
-			var text = texts[i % texts.length];
-			birthdaySvg.append("text")
-				.style("fill", color)
-				.text(text)
-				.attr("x", Math.floor(Math.random() * width))
-				.attr("y", Math.floor(Math.random() * height));
-			i++;
-		}, 50);
-	</script>
+	Todo: impement something
 </body>
 </html>
