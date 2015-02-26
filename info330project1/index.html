@@ -1,0 +1,26 @@
+<html>
+<head>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<style>
+		h1 { text-align: center; }
+		p { font-family: sans-serif; }
+		circle { stroke: #000000; 
+			stroke-opacity: 0.5;
+		}
+		body {text-align: center;}
+		#legendBox { fill: none; 
+		stroke: #000000; }
+	</style>
+	<title>US Marine Pollution</title>
+</head>
+<body>
+	<h1>US Marine Pollution</h1>
+	<p>Each circle represents a marine spill reported to the Coast Guard from 2002-2013. The radius of the circles
+	is proportional to the logarithm of the size of the spill. </p>
+<!-- 	<div id="lineplot"></div> -->
+	<div id="map"></div>
+	<div id ="gulfmap"></div>
+	<script src="projectCode.js"></script>
+</body>
+</html>
