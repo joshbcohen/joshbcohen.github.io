@@ -1,0 +1,1 @@
+This repository will eventually host a personal site for joshbcohen on Github. For now, it contains my past projects for [INFO 3300](http://mimno.infosci.cornell.edu/info3300/), a class that I'm serving as a teaching assistant for. 
