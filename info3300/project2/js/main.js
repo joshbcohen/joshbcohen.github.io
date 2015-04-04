@@ -299,37 +299,6 @@
          // get state abbreviation
         document.getElementById('stateName').innerHTML=statesObj[d.id].name;
         d3.select(d3.event.target).classed("highlight", true);
-
-        document.getElementById("stateName_left").innerHTML = "State: " + statesObj[d.id].name;
-        for (var allTypes in fuelColor) {
-          var elementId = allTypes.split(' ').join('_');
-
-          document.getElementById(elementId).innerHTML=allTypes;
-          document.getElementById("n" + elementId).innerHTML=allTypes;
-        }
-
-
-        var pieChartData = getPieChartData(year, statesObj[d.id].code);
-
-        for (var data in pieChartData) {
-          var energyType = pieChartData[data].label;
-          var dataElementId = energyType.split(' ').join('_');
-
-          document.getElementById(dataElementId).innerHTML="<b>" + energyType + "</b>: " +
-            numberWithCommas(pieChartData[data].value) + " MW";
-        }
-
-        var yearPieChartData = getPieChartDataByYear(year);
-
-        for (var yearData in yearPieChartData) {
-
-          var yearEnergyType = yearPieChartData[yearData].label;
-          var yearDataElementId = yearEnergyType.split(' ').join('_');
-
-          document.getElementById("n" + yearDataelementId).innerHTML="<b>" + yearEnergyType + "</b>: " +
-            numberWithCommas(yearPieChartData[data].value) + " MW";
-        }
-        
       })
       .style("fill",function(d) {
         var energySource = energySourceObj[statesObj[d.id].code];
@@ -840,36 +809,6 @@
         }
         displayStatePieChart(theYear, statesArray[theState].code);
         displayStatePieChartByYear(theYear);
-
-        // left and right hand side values
-        document.getElementById("stateName_left").innerHTML = "State: " + statesArray[theState].code;
-        for (var allTypes in fuelColor) {
-          var elementId = allTypes.split(' ').join('_');
-
-          document.getElementById(elementId).innerHTML=allTypes;
-          document.getElementById("n" + elementId).innerHTML=allTypes;
-        }
-
-        var pieChartData = getPieChartData(theYear, statesArray[theState].code);
-        for (var data in pieChartData) {
-
-          var energyType = pieChartData[data].label;
-          var dataElementId = energyType.split(' ').join('_');
-
-          document.getElementById(dataElementId).innerHTML="<b>" + energyType + "</b>: " +
-            numberWithCommas(pieChartData[data].value) + " MW";
-        }
-
-        var yearPieChartData = getPieChartDataByYear(theYear);
-
-        for (var yearData in yearPieChartData) {
-
-          var yearEnergyType = yearPieChartData[data].label;
-          var yearDataElementId = yearEnergyType.split(' ').join('_');
-
-          document.getElementById("n" + yearDataElementId).innerHTML="<b>" + yearEnergyType + "</b>: " +
-            numberWithCommas(yearPieChartData[data].value) + " MW";
-        }
 
         $("#currYear").text("Year: " + ui.value);
         return;
