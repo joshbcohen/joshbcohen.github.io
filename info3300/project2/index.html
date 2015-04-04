@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Fueling America</title>
+	<meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	<script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <style>
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.q0-9 { fill:rgb(247,251,255); }
+.q1-9 { fill:rgb(222,235,247); }
+.q2-9 { fill:rgb(198,219,239); }
+.q3-9 { fill:rgb(158,202,225); }
+.q4-9 { fill:rgb(107,174,214); }
+.q5-9 { fill:rgb(66,146,198); }
+.q6-9 { fill:rgb(33,113,181); }
+.q7-9 { fill:rgb(8,81,156); }
+.q8-9 { fill:rgb(8,48,107); }
+
+</style>
+</head>
+
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+    	<div class="navbar-header">
+          	<a class="navbar-brand" href="index.html">Fueling America</a>
+        </div>
+        <div class="navbar-collapse collapse">  
+        </div><!--/.navbar-collapse -->
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+    	<h1>Energy Sources of United States <br>1990 - 2010</h1>
+        <p>In this project, we would like to use d3 javascript library to display the energy sources for the United
+        	States from years 1990 to 2010. The <a href="http://catalog.data.gov/dataset/electricity-generation-by-state-by-type-of-producer-by-energy-source-3a70d" target="_blank">energy sources</a> are the following: <i>Wind, Coal, Geothermal, Hydroelectric Conventional, Natural Gas, Other Biomass, Nuclear, Other Gases, Petroleum, Pumped Storage, Solar Thermal and Photovoltaic, Wood and Wood Derived Fuels, </i>and <i>Other.</i>
+        </p>
+
+        <p>
+            The original map displays for each state the type of energy source that is used the most. Clicking on
+            a state will update the values on the pie chart to display the percentages of each energy source used
+            in that state. The lower pie chart displays the national percentage of each energy source. Clicking 
+            on a legend will display the choropleth map of that specific energy source for each state.
+        </p>
+      </div>
+</div>
+
+<div class="container">
+    <div id="smallBox">
+		<div id="stateOver">
+			<div id="stateName"></div>
+			<div id="pieChart"></div>
+		</div>
+		<div id="americaOver">
+			<div id="totalName">United States</div>
+			<div id="totalPieChart"></div>
+		</div>
+	</div>
+	<div id="bigBox">
+		<div class="nytg-navBar" style="right: 500px; bottom: 800px">
+            <div id="info">
+                <div id="stateName_left" class="nytg-navigation">State: </div>
+                <ul class="nytg-navigation clearfix" style="list-style-type: none">
+                    <li id="Wind">Wind: </li>
+                    <li id="Coal">Coal: </li>
+                    <li id="Geothermal">Geothermal: </li>
+                    <li id="Hydroelectric_Conventional">Hydroelectric Conventional: </li>
+                    <li id="Natural_Gas">Natural Gas: </li>
+                    <li id="Other_Biomass">Other Biomass: </li>
+                    <li id="Nuclear">Nuclear: </li>
+                    <li id="Other_Gases">Other Gases: </li>
+                    <li id="Petroleum">Petroleum: </li>
+                    <li id="Pumped_Storage">Pumped Storage: </li>
+                    <li id="Solar_Thermal_and_Photovoltaic">Solar Thermal and Photovoltaic: </li>
+                    <li id="Wood_and_Wood_Derived_Fuels">Wood and Wood Derived Fuels: </li>
+                    <li id="Other">Other: </li>
+                    <li id="Total">Total: </li>
+                </ul>
+            </div>
+		</div>
+
+        <div class="nytg-navBar" style="left:1000px; bottom: 1520px;">
+            <div id="info">
+                <div id="stateName_left" class="nytg-navigation">National</div>
+                <ul class="nytg-navigation clearfix" style="list-style-type: none">
+                    <li id="nWind">Wind: </li>
+                    <li id="nCoal">Coal: </li>
+                    <li id="nGeothermal">Geothermal: </li>
+                    <li id="nHydroelectric_Conventional">Hydroelectric Conventional: </li>
+                    <li id="nNatural_Gas">Natural Gas: </li>
+                    <li id="nOther_Biomass">Other Biomass: </li>
+                    <li id="nNuclear">Nuclear: </li>
+                    <li id="nOther_Gases">Other Gases: </li>
+                    <li id="nPetroleum">Petroleum: </li>
+                    <li id="nPumped_Storage">Pumped Storage: </li>
+                    <li id="nSolar_Thermal_and_Photovoltaic">Solar Thermal and Photovoltaic: </li>
+                    <li id="nWood_and_Wood_Derived_Fuels">Wood and Wood Derived Fuels: </li>
+                    <li id="nOther">Other: </li>
+                    <li id="nTotal">Total: </li>
+                </ul>
+            </div>
+        </div>
+        <input class="resetButton" type="button" value="Regular View" style="display: none;"></input>
+
+		<div id="map"></div>
+        <div id="currYear">Year: 2000</div>
+        <div id="yearSlider"></div>
+        <div id="yearSliderTicks"></div>
+	</div>
+</div>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>

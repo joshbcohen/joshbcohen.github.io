@@ -1,0 +1,185 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+h1 { 
+    text-align: center; 
+}
+p { 
+    font-family: sans-serif; 
+}
+body {
+    text-align: center;
+}
+
+/*#map {
+    border: 1px solid gray;
+}*/
+
+.container {
+    width: 1350px;
+}
+#bigBox {
+    width: 80%;
+    height: 660px;
+    float: right;
+    /*border: 1px solid gray;*/
+}
+#smallBox {
+    float: left;
+    width: 20%;
+    height: 660px;
+}
+#stateOver {
+    float: center;
+    height: 330px;
+    /*border: 1px solid gray;*/
+}
+#americaOver {
+    float: center;
+    height: 330px;
+    /*border: 1px solid gray;*/
+    /*background-color: #FF3;*/
+}
+#legendBox { 
+    fill: none; 
+    stroke: #000000; 
+}
+
+/*#legend {
+    width: 350px;
+    height: 400px;
+}*/
+/* Navigation */
+.nytg-navBar {
+/*    border-top: solid 1px #DDD;*/
+    padding: 15px 0 0;
+    margin: 0 10px;
+    z-index: 100;
+    position: absolute; 
+    width: 200px;
+}
+
+
+.nytg-navigation li {
+    color: #444;
+    font-size: 14px;
+    cursor: pointer;
+    /*float: left;*/
+    padding: 10px 18px;
+    border-top: solid 1px #CCC;
+    border-bottom: solid 1px #CCC;
+    border-left: solid 1px #CCC;
+    border-right: solid 1px #CCC;
+    background: #f9f9f9;
+    margin: 0 0;
+}
+
+.nytg-navigation li:first-of-type{
+    border-radius: 4px 0 0 4px;
+}
+.nytg-navigation li:last-of-type{
+
+    border-right: solid 1px #CCC;
+    border-radius: 0 4px 4px 0;
+}
+.nytg-navigation li.selected {
+    color: #000;
+    background: #e9e9e9;
+    border-color: #AAA;
+    box-shadow: inset 0px 0px 4px rgba(0,0,0,0.2);
+}
+
+.nytg-navigation li.selected {
+    color: #000;
+    background: #e9e9e9;
+    border-color: #AAA;
+    box-shadow: inset 0px 0px 4px rgba(0,0,0,0.2);
+}
+
+div.selected {
+    color: #000;
+    background: #e9e9e9;
+    border-color: #AAA;
+    box-shadow: inset 0px 0px 4px rgba(0,0,0,0.2);
+    padding-bottom:10px;
+}
+
+#totalName, #stateName {
+    font-size: 14pt;
+}
+
+#currYear {
+    width: 100px;
+    margin-top: 5px;
+    margin-left: 355px;
+}
+
+#yearSlider {
+    width: 750px;
+    margin-left: 35px;
+    margin-top: 5px;
+}
+
+#mapDesc {
+    font-size: 18px;
+
+}
+
+.highlight {
+    color: red;
+}
+
+#pieChartToolTip {
+    background: #333;
+    background: rgba(0,0,0,.8);
+    border-radius: 5px;
+    color: #fff;
+    left: 20%;
+    padding: 5px 15px;
+    width: 220px;
+    position: absolute;
+    z-index: 10;
+    width: 100;
+    height: 300;
+    visibility: hidden;
+}
+
+#yearSliderTicks {
+    width: 750px;
+    height: 16px;
+    margin-left: 35px;
+    position: relative;
+    margin-bottom: 150px;
+}
+
+.sliderTick{
+    display:inline-block;
+    position: absolute;
+    width: 1.2em;
+    margin-left: -.6em;
+    text-align: center;
+    top: -14px;
+    font-size: 8pt;
+}
+
+#stateName_left {
+    color: #000;
+    background: #e9e9e9;
+    border-color: #AAA;
+    box-shadow: inset 0px 0px 4px rgba(0,0,0,0.2);
+    font-size: 20px;
+    padding: 10px 0;
+    width: 160px;
+    position: relative;
+    left: 40px;
+}
+
+
+
+
+
+
+
