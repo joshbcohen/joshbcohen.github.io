@@ -1,11 +1,8 @@
-//var width = 500, height = 500;
 var width = 960, height = 600;
 var gulfWidth = 800, gulfHeight = 400;
 
 var projection = d3.geo.albersUsa();
-// var projectionGulf = d3.geo.albersUsa()
-//               .scale(5000)
-//               .translate([(gulfWidth/2)-250, (gulfHeight/2)-800]);
+
 var projectionGulf = d3.geo.albersUsa()
            .scale(5000)
            .translate([(gulfWidth/2)-250, (gulfHeight/2)-800]);
@@ -58,13 +55,8 @@ var statesGulf = d3.json("us.json", function(error, US) {
      .style("stroke-opacity",0.33);
 });
 
-// var testCircle = projection([0,0]);
-
-// svg.append("circle").attr("cx",testCircle[0]).attr("cy",testCircle[1]).attr("r",5);
-
 var coords = [];
 d3.json("pollution.json", function(error, pollution) {
-  //console.log(pollution);
   var logScale = d3.scale.log().range([0,6]).base(100);
   pollution.data.forEach(function(arr){
     var latitudeLongitude = arr[49];
@@ -83,21 +75,18 @@ d3.json("pollution.json", function(error, pollution) {
     svgCoord = projection(newCoord);
     svgCoordGulf = projectionGulf(newCoord);
 
-
-
     sizes.push(parseFloat(spillSize));
     
     var color;
-    if (substance == 'OIL') {
+    if (substance === 'OIL') {
       color = "#0000ff";
-    } else if (substance == 'CHEMICAL') {
+    } else if (substance === 'CHEMICAL') {
       color = "#ff0000";
     } else {
       color = "#00ff00";
     }
-    //console.log(substance);
 
-    var opacity = ((substance != "OIL") && (substance != "CHEMICAL")) ? 0.5 : 0.15;
+    var opacity = ((substance !== "OIL") && (substance !== "CHEMICAL")) ? 0.5 : 0.15;
 
     if (spillSize > 0) {
       spillSizeLog = parseFloat(spillSize) + 1;
@@ -124,8 +113,6 @@ d3.json("pollution.json", function(error, pollution) {
       }
     }
   });
-  sizes.sort(function(a,b){return b - a; });
-  // console.log(sizes);
 });
 
 // legend
