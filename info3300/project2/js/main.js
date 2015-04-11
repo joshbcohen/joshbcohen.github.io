@@ -1,6 +1,7 @@
 /** Javascript main file **/
 
 (function ($) {
+  'use strict';
   /****************************************************
    *             Variable Declarations                *
    ****************************************************/
@@ -205,17 +206,6 @@
   var quantizeScale = d3.scale.quantize()
     .domain([0, 600])
     .range(d3.range(1,10));
-
-
-  function getQuantiles() {
-    var arr = [];
-    for(var i = 1; i <= 200000000; i++) {
-      if(quantizeScale(Math.pow(i, (1/3))) > quantizeScale(Math.pow((i-1), (1/3)))) {
-        console.log(i, quantizeScale(Math.pow(i, 1/3)));
-      }
-    }
-  }
-
   var theYear = "2000";
   var theState = 36; //New York
   var theEnergy = "Coal";
@@ -229,11 +219,12 @@
    ****************************************************/
 
   /**
-   * Place commas in integers by hundreds
+   * Place commas in integers by hundreds.
+   * Source- http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
    */
-  function numberWithCommas(x) {
+  var numberWithCommas = function (x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+  };
 
   function getDominantEnergyYear(energySourceObj, energyColorObj, statesObj, year, updateCallback, colorCallback) {
     var updateDominantEnergy = d3.json("generation_annual.json", function(error, powerData) {
