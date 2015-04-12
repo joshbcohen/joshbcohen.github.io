@@ -411,25 +411,25 @@
 
     var legendCircle = legend.selectAll('circle')
       .data(fuelTypes).enter()
-      .append("circle")
-      .attr("cx", width - 260)
-      .attr("r", 8)
-      .style("cursor", "pointer")
-      .attr("cy", function(d, i) {
+      .append('circle')
+      .attr('cx', width - 260)
+      .attr('r', 8)
+      .style('cursor', 'pointer')
+      .attr('cy', function(d, i) {
         return (legendWidth - 100) + i*25;
       })
-      .style("fill", function(d, i) {
+      .style('fill', function(d, i) {
         return fuelColor[fuelTypes[i]];
       });
 
     var legendText = legend.selectAll('text')
       .data(fuelTypes).enter()
-      .append("text")
-      .attr("x", width - 240)
-      .attr("y", function(d, i) {
+      .append('text')
+      .attr('x', width - 240)
+      .attr('y', function(d, i) {
         return (legendWidth - 95) + i*25;
       })
-      .style("cursor", "pointer")
+      .style('cursor', 'pointer')
       .text(function(d, i) {
         return fuelTypes[i];
       });
@@ -454,49 +454,52 @@
           drawDominant = false;
           currEnergy = energyType;
           colorMap(powerData, currYear, statesObj, chloroplethScales, drawDominant, currEnergy, quantizeScale);
-          $(".resetButton").css("display", "block");
+          $('.resetButton').css('display', 'block');
         };
-        legendCircle.on("click", legendClick);
-        legendText.on("click", legendClick);
+        legendCircle.on('click', legendClick);
+        legendText.on('click', legendClick);
 
-        $(".resetButton").on("click", function() {
+        // Click on reset button to switch from chloropleth to normal map view
+        $('.resetButton').on('click', function() {
           if (!drawDominant) {
             drawDominant = true;
-            svg.selectAll("g.chLegend").data([]).exit().remove();
+            svg.selectAll('g.chLegend').data([]).exit().remove();
             colorMap(powerData, currYear, statesObj, fuelColor, drawDominant);
-            $(".resetButton").css("display", "none");
+            $('.resetButton').css('display', 'none');
           }
         });
 
-        $("#yearSlider").slider({
+        // Add slider to switch between years
+        $('#yearSlider').slider({
           min: yearMin,
           max: yearMax,
           value: +currYear,
           slide: function(event, ui) {
             var colorObj = drawDominant ? fuelColor : chloroplethScales;
-            $("#pieChart").html("");
-            $("#totalPieChart").html("");
+            $('#pieChart').html('');
+            $('#totalPieChart').html('');
             currYear=ui.value;
-            svg.selectAll("g.chLegend").data([]).exit().remove();
+            svg.selectAll('g.chLegend').data([]).exit().remove();
             colorMap(powerData, currYear, statesObj, colorObj, drawDominant, currEnergy, quantizeScale);
             displayPieChart('pieChart', powerData, currYear, statesObj[currState].code);
             displayPieChart('totalPieChart', powerData, currYear);
-            $("#currYear").text("Year: " + ui.value);
+            $('#currYear').text('Year: ' + ui.value);
             return;
           }
         });
 
-        $("#yearSlider").find(".sliderTick").remove();
+        // Add ticks to the slider for years
+        $('#yearSlider').find('.sliderTick').remove();
         for (var i = 0; i <= (yearMax-yearMin); i++) {
           var tickMarkHTML;
           if ((i === 0)||(i === yearMax-yearMin)) {
-            tickMarkHTML = "<span class=\"sliderTick\"><br/>" + (i + yearMin) + "</span>";
+            tickMarkHTML = '<span class=\'sliderTick\'><br/>' + (i + yearMin) + '</span>';
           } else {
-            tickMarkHTML = "<span class=\"sliderTick\">|<br/>" + (i + yearMin) + "</span>";
+            tickMarkHTML = '<span class=\'sliderTick\'>|<br/>' + (i + yearMin) + '</span>';
           }
           $(tickMarkHTML)
-            .css("left", (i * tick) + "%")
-            .appendTo($("#yearSliderTicks"));
+            .css('left', (i * tick) + '%')
+            .appendTo($('#yearSliderTicks'));
         }
       });
     });
