@@ -1,6 +1,5 @@
 /** Javascript main file **/
 (function ($) {
-  'use strict';
   $(function() {
     //Variable declarations
 
@@ -27,162 +26,32 @@
     //Element 0 of each chloropleth scale is the complementary color of the primary fuel color in fuelColor object;
     //Complementary colors found using http://serennu.com/colour/colourcalculator.php
     var chloroplethScales = {
-      'Wind' : {
-        9 : '#321900',
-        8 : '#623300',
-        7 : '#924D00',
-        6 : '#C26700',
-        5 : '#F28100',
-        4 : '#F49B34',
-        3 : '#F6B568',
-        2 : '#F8CF9C',
-        1 : '#FAE9D0',
-        0 : '#0071F2'
-      },
-      'Coal' : {
-        9 : '#322A00',
-        8 : '#625000',
-        7 : '#927600',
-        6 : '#C29C00',
-        5 : '#F2C200',
-        4 : '#F4CE34',
-        3 : '#F6DA68',
-        2 : '#F8E69C',
-        1 : '#FAF2D0',
-        0 : '#0030F2'
-      },
-      'Geothermal' : {
-        9 : '#232C00',
-        8 : '#435400',
-        7 : '#637C00',
-        6 : '#83A400',
-        5 : '#A3CC00',
-        4 : '#B5D634',
-        3 : '#C7E068',
-        2 : '#D9EA9C',
-        1 : '#EBF4D0',
-        0 : '#2900CC'
-      },
-      'Hydroelectric Conventional' : {
-        9 : '#162F00',
-        8 : '#2A6300',
-        7 : '#3E9700',
-        6 : '#52CB00',
-        5 : '#66FF00',
-        4 : '#B1FF82',
-        3 : '#CFFFB6',
-        2 : '#DEFFD0',
-        1 : '#EDFFEA',
-        0 : '#9900FF'
-      },
-      'Natural Gas' : {
-        9 : '#00270D',
-        8 : '#004D1D',
-        7 : '#00732D',
-        6 : '#00993D',
-        5 : '#00BF4D',
-        4 : '#34CB71',
-        3 : '#68D795',
-        2 : '#9CE3B9',
-        1 : '#D0EFDD',
-        0 : '#BF0071'
-      },
-      'Other Biomass' : {
-        9 : '#002F2C',
-        8 : '#006354',
-        7 : '#00977C',
-        6 : '#00CBA4',
-        5 : '#00FFCC',
-        4 : '#68FFE0',
-        3 : '#B6FFEF',
-        2 : '#D0FFF4',
-        1 : '#EAFFF9',
-        0 : '#FF0032'
-      },
-      'Nuclear' : {
-        9 : '#002E2E',
-        8 : '#00585C',
-        7 : '#00828A',
-        6 : '#00ACB8',
-        5 : '#00D6E6',
-        4 : '#68E6F2',
-        3 : '#9CEEF8',
-        2 : '#B6F2FB',
-        1 : '#EAFAFF',
-        0 : '#E61000'
-      },
-      'Other Gases' : {
-        9 : '#001929',
-        8 : '#003755',
-        7 : '#005581',
-        6 : '#0073AD',
-        5 : '#0091D9',
-        4 : '#34A7E1',
-        3 : '#68BDE9',
-        2 : '#9CD3F1',
-        1 : '#D0E9F9',
-        0 : '#D94800'
-      },
-      'Petroleum' : {
-        9 : '#00162F',
-        8 : '#002A63',
-        7 : '#003E97',
-        6 : '#0052CB',
-        5 : '#0066FF',
-        4 : '#3484FF',
-        3 : '#68A2FF',
-        2 : '#9CC0FF',
-        1 : '#D0DEFF',
-        0 : '#FF9900'
-      },
-      'Pumped Storage' : {
-        9 : '#0C002F',
-        8 : '#1A0063',
-        7 : '#280097',
-        6 : '#3600CB',
-        5 : '#4400FF',
-        4 : '#6A34FF',
-        3 : '#9068FF',
-        2 : '#B69CFF',
-        1 : '#DCD0FF',
-        0 : '#BAFF00'
-      },
-      'Solar Thermal and Photovoltaic': {
-        9 : '#29002A',
-        8 : '#550052',
-        7 : '#81007A',
-        6 : '#AD00A2',
-        5 : '#D900CA',
-        4 : '#E54ED9',
-        3 : '#ED82E3',
-        2 : '#F5B6ED',
-        1 : '#FDEAF7',
-        0 : '#00D90F'
-      },
-      'Wood and Wood Derived Fuels': {
-        9 : '#2F0018',
-        8 : '#630034',
-        7 : '#970050',
-        6 : '#CB006C',
-        5 : '#FF0088',
-        4 : '#FF4EAC',
-        3 : '#FF68B8',
-        2 : '#FFB6DC',
-        1 : '#FFEAF4',
-        0 : '#00FF76'
-      },
-      'Other': {
-        9 : '#2F000A',
-        8 : '#630010',
-        7 : '#970016',
-        6 : '#CB001C',
-        5 : '#FF0022',
-        4 : '#FF344E',
-        3 : '#FF687A',
-        2 : '#FF9CA6',
-        1 : '#FFD0D2',
-        0 : '#00FFDC'
-      }
+      'Wind' : {9 : '#321900', 8 : '#623300', 7 : '#924D00', 6 : '#C26700', 5 : '#F28100',
+                4 : '#F49B34', 3 : '#F6B568', 2 : '#F8CF9C', 1 : '#FAE9D0', 0 : '#0071F2'},
+      'Coal' : {9 : '#322A00', 8 : '#625000', 7 : '#927600', 6 : '#C29C00', 5 : '#F2C200',
+                4 : '#F4CE34', 3 : '#F6DA68', 2 : '#F8E69C', 1 : '#FAF2D0', 0 : '#0030F2'},
+      'Geothermal' : {9 : '#232C00', 8 : '#435400', 7 : '#637C00', 6 : '#83A400', 5 : '#A3CC00',
+                      4 : '#B5D634', 3 : '#C7E068', 2 : '#D9EA9C', 1 : '#EBF4D0', 0 : '#2900CC'},
+      'Hydroelectric Conventional' : {9 : '#162F00', 8 : '#2A6300', 7 : '#3E9700', 6 : '#52CB00', 5 : '#66FF00',
+                                      4 : '#B1FF82', 3 : '#CFFFB6', 2 : '#DEFFD0', 1 : '#EDFFEA', 0 : '#9900FF'},
+      'Natural Gas' : {9 : '#00270D', 8 : '#004D1D', 7 : '#00732D', 6 : '#00993D', 5 : '#00BF4D',
+                        4 : '#34CB71', 3 : '#68D795', 2 : '#9CE3B9', 1 : '#D0EFDD', 0 : '#BF0071'},
+      'Other Biomass' : {9 : '#002F2C', 8 : '#006354', 7 : '#00977C', 6 : '#00CBA4', 5 : '#00FFCC',
+                          4 : '#68FFE0', 3 : '#B6FFEF', 2 : '#D0FFF4', 1 : '#EAFFF9', 0 : '#FF0032'},
+      'Nuclear' : {9 : '#002E2E', 8 : '#00585C', 7 : '#00828A', 6 : '#00ACB8', 5 : '#00D6E6',
+                    4 : '#68E6F2', 3 : '#9CEEF8', 2 : '#B6F2FB', 1 : '#EAFAFF', 0 : '#E61000'},
+      'Other Gases' : {9 : '#001929', 8 : '#003755', 7 : '#005581', 6 : '#0073AD', 5 : '#0091D9',
+                        4 : '#34A7E1', 3 : '#68BDE9', 2 : '#9CD3F1', 1 : '#D0E9F9', 0 : '#D94800'},
+      'Petroleum' : {9 : '#00162F', 8 : '#002A63', 7 : '#003E97', 6 : '#0052CB', 5 : '#0066FF',
+                      4 : '#3484FF', 3 : '#68A2FF', 2 : '#9CC0FF', 1 : '#D0DEFF', 0 : '#FF9900'},
+      'Pumped Storage' : {9 : '#0C002F', 8 : '#1A0063', 7 : '#280097', 6 : '#3600CB', 5 : '#4400FF',
+                          4 : '#6A34FF', 3 : '#9068FF', 2 : '#B69CFF', 1 : '#DCD0FF', 0 : '#BAFF00'},
+      'Solar Thermal and Photovoltaic': {9 : '#29002A', 8 : '#550052', 7 : '#81007A', 6 : '#AD00A2', 5 : '#D900CA',
+                                          4 : '#E54ED9', 3 : '#ED82E3', 2 : '#F5B6ED', 1 : '#FDEAF7', 0 : '#00D90F'},
+      'Wood and Wood Derived Fuels': {9 : '#2F0018', 8 : '#630034', 7 : '#970050', 6 : '#CB006C', 5 : '#FF0088',
+                                      4 : '#FF4EAC', 3 : '#FF68B8', 2 : '#FFB6DC', 1 : '#FFEAF4', 0 : '#00FF76'},
+      'Other': {9 : '#2F000A', 8 : '#630010', 7 : '#970016', 6 : '#CB001C', 5 : '#FF0022',
+                4 : '#FF344E', 3 : '#FF687A', 2 : '#FF9CA6', 1 : '#FFD0D2', 0 : '#00FFDC'}
     };
 
     var fuelTypes = Object.keys(fuelColor);
@@ -205,9 +74,7 @@
 
 
 
-    /****************************************************
-     *             Function Declarations                *
-     ****************************************************/
+    //Function declarations
 
     /**
      * Place commas in integers by hundreds.
@@ -581,18 +448,56 @@
         displayPieChart('totalPieChart', powerData, currYear);
         colorMap(powerData, currYear, statesObj, fuelColor, drawDominant);
 
-        legendCircle.on("click", function(d) {
+
+        // When clicking on a legend circle or text, draw chloropleth map for energy type clicked on
+        var legendClick = function (energyType) {
           drawDominant = false;
-          currEnergy = d;
+          currEnergy = energyType;
           colorMap(powerData, currYear, statesObj, chloroplethScales, drawDominant, currEnergy, quantizeScale);
           $(".resetButton").css("display", "block");
+        };
+        legendCircle.on("click", legendClick);
+        legendText.on("click", legendClick);
+
+        $(".resetButton").on("click", function() {
+          if (!drawDominant) {
+            drawDominant = true;
+            svg.selectAll("g.chLegend").data([]).exit().remove();
+            colorMap(powerData, currYear, statesObj, fuelColor, drawDominant);
+            $(".resetButton").css("display", "none");
+          }
         });
-        legendText.on("click", function(d) {
-          drawDominant = false;
-          currEnergy = d;
-          colorMap(powerData, currYear, statesObj, chloroplethScales, drawDominant, currEnergy, quantizeScale);
-          $(".resetButton").css("display", "block");
+
+        $("#yearSlider").slider({
+          min: yearMin,
+          max: yearMax,
+          value: +currYear,
+          slide: function(event, ui) {
+            var colorObj = drawDominant ? fuelColor : chloroplethScales;
+            $("#pieChart").html("");
+            $("#totalPieChart").html("");
+            currYear=ui.value;
+            svg.selectAll("g.chLegend").data([]).exit().remove();
+            colorMap(powerData, currYear, statesObj, colorObj, drawDominant, currEnergy, quantizeScale);
+            displayPieChart('pieChart', powerData, currYear, statesObj[currState].code);
+            displayPieChart('totalPieChart', powerData, currYear);
+            $("#currYear").text("Year: " + ui.value);
+            return;
+          }
         });
+
+        $("#yearSlider").find(".sliderTick").remove();
+        for (var i = 0; i <= (yearMax-yearMin); i++) {
+          var tickMarkHTML;
+          if ((i === 0)||(i === yearMax-yearMin)) {
+            tickMarkHTML = "<span class=\"sliderTick\"><br/>" + (i + yearMin) + "</span>";
+          } else {
+            tickMarkHTML = "<span class=\"sliderTick\">|<br/>" + (i + yearMin) + "</span>";
+          }
+          $(tickMarkHTML)
+            .css("left", (i * tick) + "%")
+            .appendTo($("#yearSliderTicks"));
+        }
       });
     });
   });
