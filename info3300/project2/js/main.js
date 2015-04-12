@@ -1,13 +1,10 @@
 /** Javascript main file **/
-
 (function ($) {
   'use strict';
-  /****************************************************
-   *             Variable Declarations                *
-   ****************************************************/
-
-  //Distinct color for each fuel type; generated using http://phrogz.net/css/distinct-colors.html
   $(function() {
+    //Variable declarations
+
+    //Distinct color for each fuel type; generated using http://phrogz.net/css/distinct-colors.html
     var fuelColor = {
       "Wind" : "#F28100",
       "Coal" : "#F2C200",
@@ -205,13 +202,7 @@
     var yearMin = 1990;
     var yearMax = 2010;
     var tick = 100 / (yearMax-yearMin);
-
     var statesArray = {};
-    d3.csv("us_names.csv", function(data) {
-      data.forEach(function(d) {
-        statesArray[d.id] = d;
-      });
-    });
 
 
 
@@ -227,31 +218,29 @@
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    var getDominantEnergyYear = function (energySourceObj, energyColorObj, statesObj, year, updateCallback, colorCallback) {
-      var updateDominantEnergy = d3.json("generation_annual.json", function(error, powerData) {
-        var currYearData = powerData[year];
-        for (var state in statesObj) {
-          if (statesArray.hasOwnProperty(state)) {
-            var currDominantSource = "NaN";
-            var currDominantAmt = Number.NEGATIVE_INFINITY;
-            var currState = statesObj[state];
-            if (+currState.id <= 56) {
-              var currStateData = currYearData[currState.code]["Total Electric Power Industry"];
-              for (var energyType in currStateData) {
-                if (currStateData.hasOwnProperty(energyType) && (energyType !== 'Total')) {
-                  var currEnergy = +currStateData[energyType].replace(/,/g, '');
-                  if (currEnergy > currDominantAmt) {
-                    currDominantAmt = currEnergy;
-                    currDominantSource = energyType;
-                  }
+    var getDominantEnergyYear = function (powerData, energySourceObj, energyColorObj, statesObj, year, updateCallback, colorCallback) {
+      var currYearData = powerData[year];
+      for (var state in statesObj) {
+        if (statesArray.hasOwnProperty(state)) {
+          var currDominantSource = "NaN";
+          var currDominantAmt = Number.NEGATIVE_INFINITY;
+          var currState = statesObj[state];
+          if (+currState.id <= 56) {
+            var currStateData = currYearData[currState.code]["Total Electric Power Industry"];
+            for (var energyType in currStateData) {
+              if (currStateData.hasOwnProperty(energyType) && (energyType !== 'Total')) {
+                var currEnergy = +currStateData[energyType].replace(/,/g, '');
+                if (currEnergy > currDominantAmt) {
+                  currDominantAmt = currEnergy;
+                  currDominantSource = energyType;
                 }
               }
-              updateCallback(energySourceObj, currState.code, currDominantSource);
             }
+            updateCallback(energySourceObj, currState.code, currDominantSource);
           }
         }
-        colorCallback(energySourceObj, energyColorObj, statesObj, year);
-      });
+      }
+      colorCallback(energySourceObj, energyColorObj, statesObj, year);
     };
 
     var updateDominantEnergyYear = function (energySourceObj, currStateCode, currDominantSource) {
@@ -307,32 +296,30 @@
       getDominantEnergyYear(energyObjUpdate, fuelColor, statesArray, year, updateDominantEnergyYear, colorStatesByDominantEnergy);
     };
 
-    var getChloroplethDataYear = function (energyQuantObj, energyChloroplethColorObj, statesObj, year, energyType, scale, updateCallback, colorCallback) {
-      var updateChloroplethEnergy = d3.json("generation_annual.json", function(error, powerData) {
-        var currYearData = powerData[year];
-        for(var state in statesArray) {
-          if (statesArray.hasOwnProperty(state)) {
-            var currState = statesArray[state];
-            if (+currState.id <= 56) {
-              var currStateData = currYearData[currState.code]["Total Electric Power Industry"][energyType];
-              var currEnergy;
-              if(currStateData) {
-                currEnergy = +currStateData.replace(/,/g, '');
-              } else {
-                currEnergy = 0;
-              }
-              var currQuant;
-              if (currEnergy >= 0) {
-                currQuant = scale(Math.pow(currEnergy, (1/3)));
-              } else {
-                currQuant = 0;
-              }
-              updateCallback(energyQuantObj, currState.code, currQuant);
+    var getChloroplethDataYear = function (powerData, energyQuantObj, energyChloroplethColorObj, statesObj, year, energyType, scale, updateCallback, colorCallback) {
+      var currYearData = powerData[year];
+      for(var state in statesArray) {
+        if (statesArray.hasOwnProperty(state)) {
+          var currState = statesArray[state];
+          if (+currState.id <= 56) {
+            var currStateData = currYearData[currState.code]["Total Electric Power Industry"][energyType];
+            var currEnergy;
+            if(currStateData) {
+              currEnergy = +currStateData.replace(/,/g, '');
+            } else {
+              currEnergy = 0;
             }
+            var currQuant;
+            if (currEnergy >= 0) {
+              currQuant = scale(Math.pow(currEnergy, (1/3)));
+            } else {
+              currQuant = 0;
+            }
+            updateCallback(energyQuantObj, currState.code, currQuant);
           }
         }
-        colorCallback(energyQuantObj, energyChloroplethColorObj, statesObj, year, energyType);
-      });
+      }
+      colorCallback(energyQuantObj, energyChloroplethColorObj, statesObj, year, energyType);
     };
 
     var updateChloroplethDataYear = function (energyQuantObj, currStateCode, currQuant) {
@@ -391,84 +378,71 @@
 
     // Pie chart
     // generate data for pie chart.
-    var getPieChartData = function (year, state) {
+    var getPieChartData = function (powerData, year, state) {
       var returnData = [];
-      d3.json('generation_annual.json', function (error, powerData) {
-        var added = 0;
-        var curValue = 0;
-        var d = powerData[year][state]; // data of state and year.
-        for (var typePower in d) {
-          // returnData.push({"label": d[typePower][0], "value": d[typePower][0]});
-          
-          for (var prop in d[typePower]) {
-            
-            // console.log(prop);
-            for (var obj in returnData) {
-              // energy already exists in returnData
-              if (returnData[obj].label === prop) {
-                added = 1;
-                curValue = parseInt(d[typePower][prop].replace(/,/g, ''), 10);
-                if (curValue > 0) {
-                  returnData[obj].value += curValue;
-                }
-              }
-            }
-            if (added === 0) {
+      var added = 0;
+      var curValue = 0;
+      var d = powerData[year][state]; // data of state and year.
+      for (var typePower in d) {
+        for (var prop in d[typePower]) {
+          for (var obj in returnData) {
+            // energy already exists in returnData
+            if (returnData[obj].label === prop) {
+              added = 1;
               curValue = parseInt(d[typePower][prop].replace(/,/g, ''), 10);
-              if (curValue >= 0) {
-                returnData.push({"label": prop, "value": curValue});
+              if (curValue > 0) {
+                returnData[obj].value += curValue;
               }
-              
             }
-            added = 0;
           }
-          // returnData.push(d[typePower]);
-          // console.log(d[typePower]);
+          if (added === 0) {
+            curValue = parseInt(d[typePower][prop].replace(/,/g, ''), 10);
+            if (curValue >= 0) {
+              returnData.push({"label": prop, "value": curValue});
+            }
+            
+          }
+          added = 0;
         }
-      });
+      }
       return returnData;
     };
 
     /**
      * Get pie chart data for all states in a given year.
      */
-    var getPieChartDataByYear = function (year) {
+    var getPieChartDataByYear = function (powerData, year) {
       var returnData = [];
-      d3.json('generation_annual.json', function (error, powerData) {
-        var added = 0;
-        var curValue = 0;
-        var d = powerData[year]; // data of state and year.
-
-        for (var state in d) {
-          
-          for (var typePower in d[state]) {
-
-            for (var prop in d[state][typePower]) {
-              
-              // console.log(prop);
-              for (var obj in returnData) {
-                // energy already exists in returnData
-                if (returnData[obj].label === prop) {
-                  added = 1;
-                  // console.log(returnData[obj].label + " " + prop);
-                  curValue = parseInt(d[state][typePower][prop].replace(/,/g, ''), 10);
-                  if (curValue > 0) {
-                    returnData[obj].value += curValue;
-                  }
-                  
-                }
-              }
-              if (added === 0) {
+      var added = 0;
+      var curValue = 0;
+      var d = powerData[year]; // data of state and year.
+      console.log(d);
+      for (var state in d) {
+        for (var typePower in d[state]) {
+          for (var prop in d[state][typePower]) {
+            console.log(prop);
+            for (var obj in returnData) {
+              // energy already exists in returnData
+              if (returnData[obj].label === prop) {
+                added = 1;
                 curValue = parseInt(d[state][typePower][prop].replace(/,/g, ''), 10);
-                if (curValue >= 0) {
-                  returnData.push({"label": prop, "value": curValue});
+                console.log(state, curValue);
+                if (curValue > 0) {
+                  returnData[obj].value += curValue;
                 }
+                
               }
-              added = 0;
             }
+            if (added === 0) {
+              curValue = parseInt(d[state][typePower][prop].replace(/,/g, ''), 10);
+              if (curValue >= 0) {
+                returnData.push({"label": prop, "value": curValue});
+              }
+            }
+            added = 0;
           }
         }
-      });
+      }
       return returnData;
     };
 
@@ -715,123 +689,33 @@
     };
 
     //Create base svg
-    var svg = d3.select("#map")
-      .append("svg")
-      .attr("width",width)
-      .attr("height",height)
-      .attr("class","svgView");
-    var g = svg.append("g");
+    var svg = d3.select('#map')
+      .append('svg')
+      .attr('width',width)
+      .attr('height',height)
+      .attr('class','svgView');
+    var g = svg.append('g');
 
     // Create legend
-    var legend = svg.append("g")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("height", 200)
-      .attr("width", 200)
-      .attr("class", "svgView")
-      .attr("transform", "translate([500,0])");
+    var legend = svg.append('g')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('height', 200)
+      .attr('width', 200)
+      .attr('class', 'svgView')
+      .attr('transform', 'translate([500,0])');
 
-    var legendCircle = legend.selectAll('circle').data(fuelTypes);
-
-    legendCircle.enter()
-      .append("circle")
-      .attr("cx", width - 260)
-      .attr("r", 8);
-
-    legendCircle
-      .style("cursor", "pointer")
-      .attr("cy", function(d, i) {
-        return (legendWidth - 100) + i*25;
-      })
-      .on("click", function(d, i) {
-        theEnergy = d;
-        chloroplethWrapper(theYear, theEnergy, quantizeScale);
-        drawDominant = false;
-        $(".resetButton").css("display", "block");
-
-      })
-      .style("fill", function(d, i) {
-        return fuelColor[fuelTypes[i]];
-      });
-
-    var legendText = legend.selectAll('text').data(fuelTypes);
-
-    legendText.enter()
-      .append("text")
-      .attr("x", width - 240);
-
-    legendText
-      .attr("y", function(d, i) {
-        return (legendWidth - 95) + i*25;
-      })
-      .text(function(d, i) {
-        return fuelTypes[i];
-      })
-      .style("cursor", "pointer")
-      .on("click", function(d, i) {
-        theEnergy = d;
-        chloroplethWrapper(theYear, theEnergy, quantizeScale);
-        $(".resetButton").css("display", "block");
-        drawDominant = false;
-      });
-
-    dominantWrapper(theYear);
-
-    console.log(theState);
-    console.log(statesArray);
-    for (var state in statesArray) {
-      console.log('f' + state);
-    }
-    console.log(statesArray[0]);
-    console.log(statesArray[theState]);
-    $('#stateName').html(statesArray[theState].name);
-    displayStatePieChart(theYear, statesArray[theState].code);
-    displayStatePieChartByYear(theYear);
-
-
-    $("#yearSlider").slider({
-      min: yearMin,
-      max: yearMax,
-      value: +theYear,
-      slide: function(event, ui) {
-        $("#pieChart").html("");
-        $("#totalPieChart").html("");
-        theYear=ui.value;
-        svg.selectAll("g.chLegend").data([]).exit().remove();
-        if(drawDominant) {
-          dominantWrapper(theYear);
-        } else {
-          chloroplethWrapper(theYear, theEnergy, quantizeScale);
+    d3.csv('us_names.csv', function (stateNameData) {
+      d3.json('generation_annual.json', function (error, powerData) {
+        if (error) {
+          return console.warn(error);
         }
-        displayStatePieChart(theYear, statesArray[theState].code);
-        displayStatePieChartByYear(theYear);
-
-        $("#currYear").text("Year: " + ui.value);
-        return;
-      }
-    });
-
-    $("#yearSlider").find(".sliderTick").remove();
-
-    for (var i = 0; i <= (yearMax-yearMin); i++) {
-      var tickMarkHTML;
-      if ((i === 0)||(i === max-min)) {
-        tickMarkHTML = "<span class=\"sliderTick\"><br/>" + (i + yearMin) + "</span>";
-      } else {
-        tickMarkHTML = "<span class=\"sliderTick\">|<br/>" + (i + yearMin) + "</span>";
-      }
-      $(tickMarkHTML)
-        .css("left", (i * tick) + "%")
-        .appendTo($("#yearSliderTicks"));
-    }
-
-    $(".resetButton").on("click", function() {
-      if (!drawDominant) {
-        drawDominant = true;
-        svg.selectAll("g.chLegend").data([]).exit().remove();
-        dominantWrapper(theYear);
-        $(".resetButton").css("display", "none");
-      }
+        stateNameData.forEach(function(d) {
+          statesArray[d.id] = d;
+        });
+        console.log(getPieChartData(powerData, '1990', 'AK'));
+        console.log(getPieChartDataByYear(powerData, '1990'));
+      });
     });
   });
 })(jQuery);

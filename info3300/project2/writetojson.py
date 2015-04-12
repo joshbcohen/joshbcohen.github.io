@@ -32,16 +32,8 @@ def main():
             if ((row[0] != 'YEAR') and
                     (row[1] != '  ') and
                     (row[1] != 'STATE_CODE') and
-                    (dictobject[row[0]][row[1]].get(row[2]) is None)):
-                dictobject[row[0]][row[1]][row[2]] = {}
-
-    with open('generation_annual.csv', 'rU') as generationcsv:
-        generationreader = csv.reader(generationcsv)
-        for row in generationreader:
-            if ((row[0] != 'YEAR') and
-                    (row[1] != '  ') and
-                    (row[1] != 'STATE_CODE')):
-                dictobject[row[0]][row[1]][row[2]].update({row[3]: row[4]})
+                    (row[2] == 'Total Electric Power Industry')):
+                dictobject[row[0]][row[1]].update({row[3]: row[4]})
 
     with open('generation_annual.json', 'w') as generationjson:
         json.dump(dictobject, generationjson, sort_keys=True, indent=4, separators=(',', ': '))
