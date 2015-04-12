@@ -405,7 +405,7 @@
   // Pie chart
   // generate data for pie chart.
   function getPieChartData(year, state) {
-    returnData = [];
+    var returnData = [];
     var added = 0;
     var curValue = 0;
     var d = annualData[year][state]; // data of state and year.
@@ -444,7 +444,7 @@
    * Get pie chart data for all states in a given year.
    */
   function getPieChartDataByYear(year) {
-    returnData = [];
+    var returnData = [];
     var added = 0;
     var curValue = 0;
     var d = annualData[year]; // data of state and year.
