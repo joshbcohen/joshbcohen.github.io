@@ -33,12 +33,12 @@ body {
     height: 660px;
 }
 #stateOver {
-    float: center;
+    float: none;
     height: 330px;
     /*border: 1px solid gray;*/
 }
 #americaOver {
-    float: center;
+    float: none;
     height: 330px;
     /*border: 1px solid gray;*/
     /*background-color: #FF3;*/
@@ -132,7 +132,7 @@ div.selected {
     color: red;
 }
 
-#pieChartToolTip {
+.vizTooltip {
     background: #333;
     background: rgba(0,0,0,.8);
     border-radius: 5px;
