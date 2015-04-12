@@ -192,17 +192,16 @@
     var quantizeScale = d3.scale.quantize()
       .domain([0, 600])
       .range(d3.range(1,10));
-    var defaultYear = '2000';
-    var defaultState = 36; //New York
-    var defaultEnergy = 'Coal';
-    var testArray = {};
+    var currYear = '2000';
+    var currState = 36; //New York
+    var currEnergy = 'Coal';
     var drawDominant = true;
     var legendWidth = 350;
     var legendHeight = 400;
     var yearMin = 1990;
     var yearMax = 2010;
     var tick = 100 / (yearMax-yearMin);
-    var statesArray = {};
+    var statesObj = {};
 
 
 
@@ -216,6 +215,168 @@
      */
     var numberWithCommas = function (x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    // Returns an object containing the dominant energy source for each state in a given year
+    var getDominantEnergyObject = function(powerData, year, statesObj) {
+      var energySourceObj = {};
+      var currYearData = powerData[year];
+      for (var state in statesObj) {
+        if (statesObj.hasOwnProperty(state)) {
+          var currDominantSource = 'NaN';
+          var currDominantAmt = Number.NEGATIVE_INFINITY;
+          var currState = statesObj[state];
+          if (+currState.id <= 56) {
+            var currStateData = currYearData[currState.code];
+            for (var energyType in currStateData) {
+              if (currStateData.hasOwnProperty(energyType) && (energyType !== 'Total')) {
+                var currEnergy = +currStateData[energyType].replace(/,/g, '');
+                if (currEnergy > currDominantAmt) {
+                  currDominantAmt = currEnergy;
+                  currDominantSource = energyType;
+                }
+              }
+            }
+            energySourceObj[currState.code] = currDominantSource;
+          }
+        }
+      }
+      return energySourceObj;
+    };
+
+    // Returns an object containing the quantiles for each state in a given year for a given energy source
+    var getChloroplethEnergyObject = function (powerData, year, statesObj, energyType, scale) {
+      var energyQuantObj = {};
+      var currYearData = powerData[year];
+      for (var state in statesObj) {
+        if (statesObj.hasOwnProperty(state)) {
+          var currState = statesObj[state];
+          if (+currState.id <= 56) {
+            var currStateData = currYearData[currState.code][energyType];
+            var currEnergy;
+            if(currStateData) {
+              currEnergy = +currStateData.replace(/,/g, '');
+            } else {
+              currEnergy = 0;
+            }
+            var currQuant;
+            if (currEnergy >= 0) {
+              currQuant = scale(Math.pow(currEnergy, (1/3)));
+            } else {
+              currQuant = 0;
+            }
+            energyQuantObj[currState.code] = currQuant;
+          }
+        }
+      }
+      return energyQuantObj;
+    };
+
+    // Draws a scale at the bottom of the map representing the chloropleth quantiles for a given energy source
+    var drawChloroplethScale = function (energy) {
+      var legendTextArray = ['Negative', 'Least', 'Most'];
+      var chLegendHeight = 200;
+      var chLegendWidth = 720;
+      var chLegend = svg.append('g')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('height', chLegendHeight)
+        .attr('width', chLegendWidth)
+        .attr('class', 'chLegend');
+
+      var chLegendRect = chLegend.selectAll('rect')
+        .data(Object.keys(chloroplethScales[energy]))
+        .enter();
+
+      chLegendRect.append('rect')
+        .attr('x', function(d, i) {
+          return 50+((i/10) * chLegendWidth);
+        })
+        .attr('y', 550)
+        .attr('height', 20)
+        .attr('width', chLegendWidth/10)
+        .style('fill', function(d, i) {
+          return chloroplethScales[energy][d];
+        });
+
+      var chText = chLegend.selectAll('text')
+        .data(legendTextArray)
+        .enter()
+        .append('text')
+        .attr('x', function(d, i) {
+          var x;
+          if (i === 0) {
+            x = 50;
+          } else if (i === 1) {
+            x = 50 + ((1/10) * chLegendWidth);
+          } else {
+            x = 50 + ((9.5/10) * chLegendWidth);
+          }
+          return x;
+        })
+        .attr('y', 535)
+        .text(function(d, i) {
+          return d;
+        });
+    };
+
+    // Colors the map based on the dominant energy or chloropleth data
+    var colorMap = function (powerData, year, statesObj, colorObj, isDominant, energyType, scale) {
+      var energyObj;
+      if (isDominant) {
+        energyObj = getDominantEnergyObject(powerData, year, statesObj);
+      } else {
+        energyObj = getChloroplethEnergyObject(powerData, year, statesObj, energyType, scale);
+      }
+      var tooltip = d3.select('#map > .vizTooltip');
+      var svg = d3.select('#map > svg');
+      var g = svg.select('g.states');
+      var states = d3.json('us.json', function(error, US) {
+        g.selectAll('path').data([]).exit().remove();
+        g.remove();
+        svg.append('g')
+          .selectAll('path')
+          .data(topojson.feature(US,US.objects.states).features)
+          .enter().append('path')
+          .attr('d', path)
+          .attr('class', 'states')
+          .on('mouseover', function(d, i){
+          tooltip.text(statesObj[d.id].name);
+          return tooltip.style('visibility', 'visible');
+        })
+        .on('mousemove', function(){
+          return tooltip.style('top', (event.pageY-10)+'px').style('left',(event.pageX+10)+'px');
+        })
+        .on('mouseout', function(){
+          return tooltip.style('visibility', 'hidden');
+        })
+        .on('click', function(d){
+          $('#pieChart > svg').remove();
+          $('#totalPieChart > svg').remove();
+          displayPieChart('pieChart', powerData, year, statesObj[d.id].code);
+          displayPieChart('totalPieChart', powerData, year);
+           // get state abbreviation
+          $('#stateName').html(statesObj[d.id].name);
+          d3.select(d3.event.target).classed('highlight', true);
+        })
+        .style('fill',function(d) {
+          var colorFill;
+          if (isDominant) {
+            var energySource = energyObj[statesObj[d.id].code];
+            colorFill = colorObj[energySource];
+          } else {
+            var energyQuant = energyObj[statesObj[d.id].code];
+            colorFill = colorObj[energyType][energyQuant];
+          }
+          return colorFill;
+        })
+        .style('cursor', 'pointer')
+        .style('stroke','black')
+        .style('stroke-opacity',0.33);
+        if (!isDominant) {
+          drawChloroplethScale(energyType);
+        }
+      });
     };
 
     /** 
@@ -284,15 +445,6 @@
       var h = 300;                        //height
       var r = 120;                        //radius
 
-
-      var vis = d3.select('#' + elementID)
-        .append('svg')
-        .data([newData])
-        .attr('width', w)
-        .attr('height', h)
-        .append('g')
-        .attr('transform', 'translate(' + 132 + ',' + 132 + ')');
-
       var arc = d3.svg.arc().outerRadius(r);
 
       var pie = d3.layout.pie()
@@ -308,10 +460,18 @@
         }
       }
 
-      var tooltip = d3.select('#' + elementID + '> .pieChartToolTip');
+      var vis = d3.select('#' + elementID)
+        .append('svg')
+        .attr('width', w)
+        .attr('height', h)
+        .append('g')
+        .attr('transform', 'translate(' + 132 + ',' + 132 + ')');
+
+      var tooltip = d3.select('#' + elementID + '> .vizTooltip');
+
       //this selects all <g> elements with class slice (there aren't any yet)
       var arcs = vis.selectAll('g.slice')
-        .data(pie) // associate the generated pie data (an array of arcs, each having
+        .data(pie(newData)) // associate the generated pie data (an array of arcs, each having
                // startAngle, endAngle and value properties) 
         .enter()   //this will create <g> elements for every 'extra' data element that should
                // be associated with a selection. The result is creating a <g> for every 
@@ -326,9 +486,8 @@
           return fuelColor[t];
         }) //set the color for each slice to be chosen from the color function defined above
         .on('mouseover', function(d, i){
-          // console.log(d.data);
           tooltip.text(d.data['label'] + ': ' + numberWithCommas(d.data['value']) + ' MW');
-          return tooltip.style('visibility', 'visible');
+          tooltip.style('visibility', 'visible');
         })
         .on('mousemove', function(){
           return tooltip.style('top', (event.pageY-10)+'px').style('left',(event.pageX+10)+'px');
@@ -355,7 +514,7 @@
         .on('mouseout', function(){
           return tooltip.style('visibility', 'hidden');
         })
-        .attr('text-anchor', 'middle') //center the text on it's origin
+        .attr('text-anchor', 'middle') //center the text on its origin
         .text(function(d, i) {
           var percentage = Math.round(newData[i].value / total * 100);
           // console.log(newData[i].label, percentage, fuelColor[newData[i].label])
@@ -367,61 +526,12 @@
         }); //get the label from our original data array
     };
 
-      // jquery for slider
-    var drawChloroplethScale = function (energy) {
-      var legendTextArray = ['Negative', 'Least', 'Most'];
-      var chLegendHeight = 200;
-      var chLegendWidth = 720;
-      var chLegend = svg.append('g')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('height', chLegendHeight)
-        .attr('width', chLegendWidth)
-        .attr('class', 'chLegend');
-
-      var chLegendRect = chLegend.selectAll('rect')
-        .data(Object.keys(chloroplethScales[energy]))
-        .enter();
-
-      chLegendRect.append('rect')
-        .attr('x', function(d, i) {
-          return 50+((i/10) * chLegendWidth);
-        })
-        .attr('y', 550)
-        .attr('height', 20)
-        .attr('width', chLegendWidth/10)
-        .style('fill', function(d, i) {
-          return chloroplethScales[energy][d];
-        });
-
-      var chText = chLegend.selectAll('text')
-        .data(legendTextArray)
-        .enter()
-        .append('text')
-        .attr('x', function(d, i) {
-          var x;
-          if (i === 0) {
-            x = 50;
-          } else if (i === 1) {
-            x = 50 + ((1/10) * chLegendWidth);
-          } else {
-            x = 50 + ((9.5/10) * chLegendWidth);
-          }
-          return x;
-        })
-        .attr('y', 535)
-        .text(function(d, i) {
-          return d;
-        });
-    };
-
     //Create base svg
     var svg = d3.select('#map')
       .append('svg')
       .attr('width',width)
       .attr('height',height)
       .attr('class','svgView');
-    var g = svg.append('g');
 
     // Create legend
     var legend = svg.append('g')
@@ -432,17 +542,57 @@
       .attr('class', 'svgView')
       .attr('transform', 'translate([500,0])');
 
+    var legendCircle = legend.selectAll('circle')
+      .data(fuelTypes).enter()
+      .append("circle")
+      .attr("cx", width - 260)
+      .attr("r", 8)
+      .style("cursor", "pointer")
+      .attr("cy", function(d, i) {
+        return (legendWidth - 100) + i*25;
+      })
+      .style("fill", function(d, i) {
+        return fuelColor[fuelTypes[i]];
+      });
+
+    var legendText = legend.selectAll('text')
+      .data(fuelTypes).enter()
+      .append("text")
+      .attr("x", width - 240)
+      .attr("y", function(d, i) {
+        return (legendWidth - 95) + i*25;
+      })
+      .style("cursor", "pointer")
+      .text(function(d, i) {
+        return fuelTypes[i];
+      });
+
     d3.csv('us_names.csv', function (stateNameData) {
       d3.json('generation_annual.json', function (error, powerData) {
         if (error) {
           return console.warn(error);
         }
         stateNameData.forEach(function(d) {
-          statesArray[d.id] = d;
+          statesObj[d.id] = d;
         });
-        $('#stateName').html(statesArray[defaultState].name);
-        displayPieChart('pieChart', powerData, defaultYear, statesArray[defaultState].code);
-        displayPieChart('totalPieChart', powerData, defaultYear);
+
+        $('#stateName').html(statesObj[currState].name);
+        displayPieChart('pieChart', powerData, currYear, statesObj[currState].code);
+        displayPieChart('totalPieChart', powerData, currYear);
+        colorMap(powerData, currYear, statesObj, fuelColor, drawDominant);
+
+        legendCircle.on("click", function(d) {
+          drawDominant = false;
+          currEnergy = d;
+          colorMap(powerData, currYear, statesObj, chloroplethScales, drawDominant, currEnergy, quantizeScale);
+          $(".resetButton").css("display", "block");
+        });
+        legendText.on("click", function(d) {
+          drawDominant = false;
+          currEnergy = d;
+          colorMap(powerData, currYear, statesObj, chloroplethScales, drawDominant, currEnergy, quantizeScale);
+          $(".resetButton").css("display", "block");
+        });
       });
     });
   });
